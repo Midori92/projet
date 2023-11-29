@@ -8,6 +8,61 @@ typedef struct {
     int operation2;
 } Exclusion;
 
+
+typedef struct sommet{
+    int nom;
+    int couleur;
+}sommet;
+
+struct arette{
+    int op1;
+    int op2;
+};
+
+typedef struct arette arette;
+typedef struct graphe {
+    arette* arbre;
+    int ordre;
+    int taille;
+}graphe;
+
+graphe* lecture(char* fichier){
+    {
+
+        graphe * g=(graphe*)malloc(sizeof(graphe));
+        FILE * ifs = fopen(fichier,"r");
+        int taille, ordre, op1, op2;
+        int cpt_taille = 0; //compteur arrete: taille
+        int cpt_ordre =0; // compteur sommet: ordre
+
+        if (!ifs)
+        {
+            printf("Erreur de lecture fichier\n");
+            exit(-1);
+        }
+
+
+        g->arbre = (arette*)malloc(taille*sizeof(arette));
+
+
+        fscanf(ifs,"%d%d",&op1,&op2);
+
+        while(op1 != NULL && op2!= NULL)
+        {
+        // créer les arêtes du graphe
+
+            printf("ARET %d et %d\n",op1,op2);
+            g->arbre[cpt_taille].op1 = op1;
+            g->arbre[cpt_taille].op2 = op2;
+            cpt_taille = cpt_taille+1;
+
+        }
+
+        return g;
+    }
+}
+
+/*
 // Fonction pour lire les contraintes d'exclusion à partir d'un fichier
 Exclusion* lecture(int* nombreContraintes) {
 
@@ -48,7 +103,7 @@ Exclusion* lecture(int* nombreContraintes) {
     *nombreContraintes = nbContraintes;
     return contraintes;
 }
-
+*/
 
 
 // Fonction pour vérifier si une paire d'opérations est autorisée sur une station
@@ -86,12 +141,14 @@ void repartirOperations(int nombreOperations, int nombreStations, int nombreCont
 }
 
 
+//graphe
+// nombre chromatique
 
 
 
 int main() {
 
-    int nombreContraintes;
+   /* int nombreContraintes;
     Exclusion* contraintes = lecture( &nombreContraintes);
 
     int nombreOperations = 35;  // Nombre total d'opérations
@@ -101,6 +158,8 @@ int main() {
 
     // Libération de la mémoire
     free(contraintes);
+    */
+   lecture("test.txt");
 
     return EXIT_SUCCESS;
 }
