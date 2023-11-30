@@ -26,14 +26,15 @@ typedef struct graphe {
     int taille;
 }graphe;
 
+//tableau des sommets
+
 graphe* lecture(char* fichier){
     {
 
         graphe * g=(graphe*)malloc(sizeof(graphe));
         FILE * ifs = fopen(fichier,"r");
-        int taille, ordre, op1, op2;
-        int cpt_taille = 0; //compteur arrete: taille
-        int cpt_ordre =0; // compteur sommet: ordre
+        int op1, op2;
+
 
         if (!ifs)
         {
@@ -41,22 +42,104 @@ graphe* lecture(char* fichier){
             exit(-1);
         }
 
-
-        g->arbre = (arette*)malloc(taille*sizeof(arette));
-
-
-        fscanf(ifs,"%d%d",&op1,&op2);
-
-        while(op1 != NULL && op2!= NULL)
-        {
-        // créer les arêtes du graphe
-
-            printf("ARET %d et %d\n",op1,op2);
-            g->arbre[cpt_taille].op1 = op1;
-            g->arbre[cpt_taille].op2 = op2;
-            cpt_taille = cpt_taille+1;
-
+//lecture nombre de lignes
+        int c;
+        int nbLigne = 0;
+        while((c= fgetc(ifs)) != EOF){
+            if (c=='\n'){
+                nbLigne++;
+                printf("nbLigne == %d\n", nbLigne);
+            }
         }
+
+        g->taille = nbLigne;
+
+        g->arbre = (arette*)malloc(g->taille*sizeof(arette));
+
+        //retour au debut du texte
+        fseek(ifs, 0, SEEK_SET);
+
+        int* liste[50];
+        int nbs =0; // compteur nombre de sommet
+
+       //lecture de chaque contraintes
+       for (int i=0; i<g->taille; ++i) {
+           int v1 = 0; //valeur ors du parcours de liste 1 si op1 deja là
+           int v2 = 0; //valeur ors du parcours de liste 1 si op2 deja là
+           // créer les arêtes du graphe
+           fscanf(ifs, "%d%d", &op1, &op2);
+           printf("ARET %d VS %d\n\n", op1, op2);
+           printf("sommet pour l'instant: %d\n", nbs);
+           g->arbre[i].op1 = op1;
+           g->arbre[i].op2 = op2;
+
+           if (nbs >= 1) {
+               for (int j = 0; j < nbs; j++) {
+                   if (liste[j] == op1) //si op1 deja dans la liste
+                   {
+                       v1 = 1;
+                       printf("op1 == %d deja dans liste \n", op1);
+                   }
+
+                   if (liste[j] == op2) //si op2 deja dans la liste
+                   {
+                       v2 = 1;
+                       printf("op2 == %d deja dans liste \n", op2);
+                   }
+
+               }
+
+                   if (v1 == 1 && v2 == 1) {
+                       printf("les 2 sont deja dans liste: %d et %d  \n", op1, op2);
+                   }
+
+                   if (v1 == 0) {
+                       liste[nbs] = op1;
+                       nbs++;
+                       printf("ajout du sommet %d dans la liste\n", op1);
+                   }
+
+                   if (v2 == 0) {
+                       liste[nbs] = op2;
+                       nbs++;
+                       printf("ajout du sommet %d dans la liste \n", op2);
+                   }
+
+
+           }
+           else { //nbs ==0
+                liste[nbs] = op1;
+                printf("op1 ajout %d\n",op1);
+                nbs++;
+                liste[nbs] = op2;
+                printf("op2 ajout %d\n", op2);
+                nbs++;
+           }
+       }
+       printf("\n\n NOMBRE SOMMET FINAL/ %d",nbs);
+
+       g->ordre = nbs;
+       int s; //sommet temporaire
+
+       int*deg = malloc(sizeof(int*) * g->ordre); //tableau des dégré des sommets
+
+       printf("Boucle\n");
+       for (int i=0;i<g->ordre;i++){
+           s = liste[i];
+           printf("s= %s\n",s);
+           int cpt = 0; //compte les degre sur sommet s
+
+           for (int j =0; j<g->taille;j++) {
+               if (g->arbre[j].op1 == s || g->arbre[j].op2 == s) //une liaion
+               {
+                   cpt ++;
+                   printf("une liaison du s= %d \n",s);
+               }
+           }
+
+           printf("DEGRE DE %d: %d\n",s, cpt);
+           deg[i] = cpt;
+       }
 
         return g;
     }
