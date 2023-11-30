@@ -59,7 +59,7 @@ graphe* lecture(char* fichier){
         //retour au debut du texte
         fseek(ifs, 0, SEEK_SET);
 
-        int* liste[50];
+        int* liste = malloc (50*sizeof(int));
         int nbs =0; // compteur nombre de sommet
 
        //lecture de chaque contraintes
@@ -95,14 +95,14 @@ graphe* lecture(char* fichier){
 
                    if (v1 == 0) {
                        liste[nbs] = op1;
-                       nbs++;
                        printf("ajout du sommet %d dans la liste\n", liste[nbs]);
+                       nbs++;
                    }
 
                    if (v2 == 0) {
                        liste[nbs] = op2;
-                       nbs++;
                        printf("ajout du sommet %d dans la liste \n", liste[nbs]);
+                       nbs++;
                    }
 
 
@@ -126,13 +126,10 @@ graphe* lecture(char* fichier){
        printf("Boucle\n");
 
 
-        s = liste[0];
-        printf("s= %s\n",s);
-
        for (int k=0; k < g->ordre; k++){
 
            s = liste[k];
-           printf("s= %s\n",s);
+           printf("s= %d\n",s);
            int cpt = 0; //compte les degre sur sommet s
 
            for (int j = 0; j < g->taille; j++) {
