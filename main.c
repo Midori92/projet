@@ -96,13 +96,13 @@ graphe* lecture(char* fichier){
                    if (v1 == 0) {
                        liste[nbs] = op1;
                        nbs++;
-                       printf("ajout du sommet %d dans la liste\n", op1);
+                       printf("ajout du sommet %d dans la liste\n", liste[nbs]);
                    }
 
                    if (v2 == 0) {
                        liste[nbs] = op2;
                        nbs++;
-                       printf("ajout du sommet %d dans la liste \n", op2);
+                       printf("ajout du sommet %d dans la liste \n", liste[nbs]);
                    }
 
 
@@ -121,15 +121,21 @@ graphe* lecture(char* fichier){
        g->ordre = nbs;
        int s; //sommet temporaire
 
-       int*deg = malloc(sizeof(int*) * g->ordre); //tableau des dégré des sommets
+       int* deg = malloc(sizeof(int) * g->ordre); //tableau des dégré des sommets
 
        printf("Boucle\n");
-       for (int i=0;i<g->ordre;i++){
-           s = liste[i];
+
+
+        s = liste[0];
+        printf("s= %s\n",s);
+
+       for (int k=0; k < g->ordre; k++){
+
+           s = liste[k];
            printf("s= %s\n",s);
            int cpt = 0; //compte les degre sur sommet s
 
-           for (int j =0; j<g->taille;j++) {
+           for (int j = 0; j < g->taille; j++) {
                if (g->arbre[j].op1 == s || g->arbre[j].op2 == s) //une liaion
                {
                    cpt ++;
@@ -138,7 +144,7 @@ graphe* lecture(char* fichier){
            }
 
            printf("DEGRE DE %d: %d\n",s, cpt);
-           deg[i] = cpt;
+           deg[k] = cpt;
        }
 
         return g;
