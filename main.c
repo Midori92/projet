@@ -187,23 +187,55 @@ graphe* lecture(char* fichier){
         tri(deg,g->ordre);
 
         printf("\n\nLISTE DEGRE 2: \n");
+///sommet et indice
+        for(int i=0;i< g->ordre; i++) {
+            printf("Sommet : %d degre: %d \n", liste[i], deg[i]);
+            for (int j = 0; j < g->ordre; j++) {
+                if(g->sommet[j].op1.val == liste[i]){
+                    g->sommet[j].op1.indice = i;
+                    printf("1- %d d'indice %d\n",g->sommet[j].op1.val,g->sommet[j].op1.indice);
+                }
 
-        for(int i=0;i< g->ordre; i++){
-            printf("Sommet : %d degre: %d \n",liste[i],deg[i]);
+                if(g->sommet[j].op2.val == liste[i]){
+                    g->sommet[j].op2.indice = i;
+                    printf("2- %d d'indice %d\n",g->sommet[j].op2.val,g->sommet[j].op2.indice);
+                }
+            }
+
         }
-
+/*
         int* color = malloc(sizeof(int) * g->ordre); //0 partout si pas de couleur
         int couleur = 0;
+        */
 /////
 //remplir matrice
 
-        for(int i=0;i<g->taille;i++){
+        int indice1;
+        int indice2;
+        printf("TAILLE: %d", g->taille);
 
+        for(int i=0;i<g->taille;i++){
+            printf("ok");
+            indice1 = g->sommet[i].op1.indice;
+            indice2 = g->sommet[i].op2.indice;
+            printf("In1: %d\n",indice1);
+            printf("In2: %d\n",indice2);
+
+            g->adj[indice1][indice2] = 1;
+            g->adj[indice2][indice1] = 1;
+
+        }
+
+        for (int i =0; i<g->ordre; i++){
+            for (int j =0; j<g->ordre; j++){
+                printf("%d - ",g->adj[i][j]);
+            }
+            printf("\n");
         }
 
 
         //well et powell
-
+/*
         int s1;
 
         for(int i = 0; i<g->ordre; i++) {
@@ -216,7 +248,7 @@ graphe* lecture(char* fichier){
 
 
             }
-        }
+        }*/
 
 
         return g;
