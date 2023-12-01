@@ -9,11 +9,6 @@ typedef struct {
 } Exclusion;
 
 
-typedef struct sommet{
-    int nom;
-    int couleur;
-}sommet;
-
 struct arette{
     int op1;
     int op2;
@@ -21,9 +16,10 @@ struct arette{
 
 typedef struct arette arette;
 typedef struct graphe {
-    arette* arbre;
+    arette* sommet;
     int ordre;
     int taille;
+    int** adj;
 }graphe;
 
 //tableau des sommets
@@ -72,7 +68,7 @@ graphe* lecture(char* fichier){
 
         g->taille = nbLigne;
 
-        g->arbre = (arette*)malloc(g->taille*sizeof(arette));
+        g->sommet = (arette*)malloc(g->taille*sizeof(arette));
 
         //retour au debut du texte
         fseek(ifs, 0, SEEK_SET);
@@ -88,8 +84,8 @@ graphe* lecture(char* fichier){
            fscanf(ifs, "%d%d", &op1, &op2);
            printf("ARET %d VS %d\n\n", op1, op2);
            printf("sommet pour l'instant: %d\n", nbs);
-           g->arbre[i].op1 = op1;
-           g->arbre[i].op2 = op2;
+           g->sommet[i].op1 = op1;
+           g->sommet[i].op2 = op2;
 
            if (nbs >= 1) {
                for (int j = 0; j < nbs; j++) {
@@ -125,30 +121,39 @@ graphe* lecture(char* fichier){
 
 
            }
+
            else { //nbs ==0
                 liste[nbs] = op1;
-                printf("op1 ajout %d\n",op1);
                 nbs++;
                 liste[nbs] = op2;
-                printf("op2 ajout %d\n", op2);
                 nbs++;
            }
        }
-       printf("\n\n NOMBRE SOMMET FINAL/ %d",nbs);
+       printf("\n\n NOMBRE SOMMET FINAL/ %d\n",nbs);
 
        g->ordre = nbs;
-       int s; //sommet temporaire
+       g->adj = (int**) malloc(sizeof(int*)*g->ordre); //matrice d'adjacence
 
+        // initiatlisation de la matrice
+       for (int i = 0;i>g->ordre; i++){
+           for (int j = 0;j>g->ordre; j++){
+              g-> adj[i][j] = 0;
+           }
+       }
+
+
+
+
+       int s; //sommet temporaire
        int* deg = malloc(sizeof(int) * g->ordre); //tableau des dégré des sommets
 
        for (int k=0; k < g->ordre; k++){
 
            s = liste[k];
-           printf("s= %d\n",s);
            int cpt = 0; //compte les degre sur sommet s
 
            for (int j = 0; j < g->taille; j++) {
-               if (g->arbre[j].op1 == s || g->arbre[j].op2 == s) //une liaion
+               if (g->sommet[j].op1 == s || g->sommet[j].op2 == s) //une liaion
                {
                    cpt ++;
                    printf("une liaison du s= %d \n",s);
@@ -173,11 +178,30 @@ graphe* lecture(char* fichier){
             printf("Sommet : %d degre: %d \n",liste[i],deg[i]);
         }
 
+        int* color = malloc(sizeof(int) * g->ordre); //0 partout si pas de couleur
+        int couleur = 0;
+
+        //well et powell
+
+        int s1;
+
+        for(int i = 0; i<g->ordre; i++) {
+            s1 = liste[i];
+            if(color[i] == 0){
+             color[i] = couleur++;
+            }
+
+            for(int j = 0; j<g->ordre; j++){
+
+
+            }
+        }
 
 
         return g;
     }
 }
+
 
 /*
 // Fonction pour lire les contraintes d'exclusion à partir d'un fichier
