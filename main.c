@@ -28,6 +28,24 @@ typedef struct graphe {
 
 //tableau des sommets
 
+void tri(int* liste, int max) //tri des degre des sommet par ordre décroissant
+{
+    int temp;
+    for(int i = 0; i< max-1; i++){
+        for (int j =0; j < max -i-1; j++){
+            if(liste[j] < liste[j+1]){
+                temp = liste[j];
+                liste[j] = liste[j+1];
+                liste[j+1] = temp;
+
+            }
+        }
+
+    }
+}
+
+
+
 graphe* lecture(char* fichier){
     {
 
@@ -123,9 +141,6 @@ graphe* lecture(char* fichier){
 
        int* deg = malloc(sizeof(int) * g->ordre); //tableau des dégré des sommets
 
-       printf("Boucle\n");
-
-
        for (int k=0; k < g->ordre; k++){
 
            s = liste[k];
@@ -143,6 +158,22 @@ graphe* lecture(char* fichier){
            printf("DEGRE DE %d: %d\n",s, cpt);
            deg[k] = cpt;
        }
+
+       printf("\n\nLISTE DEGRE 1: \n");
+
+       for(int i=0;i< g->ordre; i++){
+           printf("Sommet : %d degre: %d \n",liste[i],deg[i]);
+       }
+
+        tri(deg,g->ordre);
+
+        printf("\n\nLISTE DEGRE 2: \n");
+
+        for(int i=0;i< g->ordre; i++){
+            printf("Sommet : %d degre: %d \n",liste[i],deg[i]);
+        }
+
+
 
         return g;
     }
