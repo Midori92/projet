@@ -8,11 +8,18 @@ typedef struct {
     int operation2;
 } Exclusion;
 
+struct point{
+    int val;
+    int indice;
+};
+
+typedef struct point point;
 
 struct arette{
-    int op1;
-    int op2;
+    point op1;
+    point op2;
 };
+
 
 typedef struct arette arette;
 typedef struct graphe {
@@ -84,8 +91,8 @@ graphe* lecture(char* fichier){
            fscanf(ifs, "%d%d", &op1, &op2);
            printf("ARET %d VS %d\n\n", op1, op2);
            printf("sommet pour l'instant: %d\n", nbs);
-           g->sommet[i].op1 = op1;
-           g->sommet[i].op2 = op2;
+           g->sommet[i].op1.val = op1;
+           g->sommet[i].op2.val = op2;
 
            if (nbs >= 1) {
                for (int j = 0; j < nbs; j++) {
@@ -140,8 +147,7 @@ graphe* lecture(char* fichier){
               g-> adj[i][j] = 0;
            }
        }
-
-
+/////////////////////////////////
 
 
        int s; //sommet temporaire
@@ -153,11 +159,19 @@ graphe* lecture(char* fichier){
            int cpt = 0; //compte les degre sur sommet s
 
            for (int j = 0; j < g->taille; j++) {
-               if (g->sommet[j].op1 == s || g->sommet[j].op2 == s) //une liaion
+               if (g->sommet[j].op1.val == s) //une liaion
                {
                    cpt ++;
-                   printf("une liaison du s= %d \n",s);
+                   printf(" 1 -une liaison du s= %d \n",s);
                }
+
+               if (g->sommet[j].op2.val == s) //une liaion
+               {
+                   cpt ++;
+                   printf("2 - une liaison du s= %d \n",s);
+               }
+
+
            }
 
            printf("DEGRE DE %d: %d\n",s, cpt);
@@ -180,6 +194,13 @@ graphe* lecture(char* fichier){
 
         int* color = malloc(sizeof(int) * g->ordre); //0 partout si pas de couleur
         int couleur = 0;
+/////
+//remplir matrice
+
+        for(int i=0;i<g->taille;i++){
+
+        }
+
 
         //well et powell
 
