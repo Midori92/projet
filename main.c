@@ -48,25 +48,27 @@ void tri(int* liste, int max) //tri decroissant des degre des sommet par ordre d
     }
 }
 
+
 graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
     int op1, op2;
 //lecture nombre de lignes
     int c;
-    int nbLigne = 0;
+    int nbLigne = 1;
     while((c= fgetc(ifs)) != EOF){
         if (c=='\n'){
             nbLigne++;
-            printf("nbLigne == %d\n", nbLigne);
         }
     }
 
+    printf("orde %d",g->ordre);
     g->taille = nbLigne;
+    printf("orde %d",g->taille);
     g->sommet = (arette*)malloc(g->taille*sizeof(arette));
+    g-> liste = malloc (sizeof(int) * g->ordre);
 
     //retour au debut du texte
     fseek(ifs, 0, SEEK_SET);
 
-    g-> liste = malloc (sizeof(int*));
     int nbs =0; // compteur nombre de sommet
 
     //lecture de chaque contraintes
@@ -75,8 +77,7 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
         int v2 = 0; //valeur ors du parcours de liste 1 si op2 deja là
         // créer les arêtes du graphe
         fscanf(ifs, "%d%d", &op1, &op2);
-        //printf("ARET %d VS %d\n\n", op1, op2);
-        //printf("sommet pour l'instant: %d\n", nbs);
+
         g->sommet[i].op1.val = op1;
         g->sommet[i].op2.val = op2;
         if (nbs >= 1) {
@@ -102,8 +103,6 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
                 g->liste[nbs] = op2;
                 nbs++;
             }
-
-
         }
 
         else { //nbs ==0
@@ -115,10 +114,7 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
     }
 
     g->ordre = nbs;
-    g->adj = (int**) calloc(g->ordre, sizeof(int *)); //matrice d'adjacence
-    for (int i =0; i< g->ordre; i++){
-        g->adj[i] = (int*) calloc(g->ordre, sizeof(int));
-    }
+    
 
     int s; //sommet temporaire
     int* deg = malloc(sizeof(int) * g->ordre); //tableau des dégré des sommets
@@ -146,7 +142,6 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
     tri(deg,g->ordre);
 
     for(int i=0;i< g->ordre; i++) {
-        // printf("Sommet : %d degre: %d \n", g->liste[i], deg[i]);
         for (int j = 0; j < g->ordre; j++) {
             if(g->sommet[j].op1.val == g->liste[i]){
                 g->sommet[j].op1.indice = i;
@@ -159,17 +154,26 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
     }
 
+    for(int i =0; i<g->ordre;i++){
+        printf(" S: %d\n",g->liste[i]);
+    }
+
     return g;
 }
 
 graphe* ADJ(graphe* g){
     //remplir matrice
 
+    g->adj = (int**) calloc(g->ordre, sizeof(int *)); //matrice d'adjacence
+    for (int i =0; i< g->ordre; i++){
+        g->adj[i] = (int*) calloc(g->ordre, sizeof(int));
+    }
+
     int indice1;
     int indice2;
 ///PB
     for(int i=0;i<g->taille;i++){
-
+    printf("%d",i);
         indice1 = g->sommet[i].op1.indice;
         indice2 = g->sommet[i].op2.indice;
 
@@ -186,7 +190,7 @@ graphe* WP(graphe* g){
 
     printf("\n\nWELSH ET POWELL");
     int s1;
-    int* color = (int*) calloc(g->ordre,sizeof(int*)); //0 partout si pas de couleur
+    int* color = (int*) calloc(g->ordre,sizeof(int)); //0 partout si pas de couleur
     int couleur = 1;
 
 
@@ -201,7 +205,7 @@ graphe* WP(graphe* g){
             for (int j = i+1; j < g->ordre; j++) { // coloration de sommet en fonction de lien avec s1 ou non
 
                 if (g->adj[i][j] == 0 && color[j] == 0) { // pas de lien avec s1
-                    //printf("%d n'as pas de lien avec %d\n", s1, g->liste[j]);
+                    //printf("%d n'as pas de lien avec %d\n", s1, color[j]);
                     color[j] = couleur;
                     printf("Couleur de %d == %d\n",g->liste[j],color[j]);
 
@@ -212,9 +216,9 @@ graphe* WP(graphe* g){
                             break;
                         }
 
-                        else {
+                       /* else {
                             printf("ok pour %d et %d \n", g->liste[j], g->liste[l]);
-                        }
+                        }*/
 
 
                     }
@@ -255,6 +259,8 @@ int main() {
         exit(-1);
     }
 
+    g->ordre = 8;
+
     Graphe(ifs,g);
     ADJ(g);
     WP(g);
@@ -267,5 +273,5 @@ int main() {
     free(g);
     fclose(ifs);
 
-    return EXIT_SUCCESS;
+    return 0;
 }
