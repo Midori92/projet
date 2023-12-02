@@ -245,7 +245,7 @@ graphe* exclusion(char* fichier){
 
                         for (int l = i; l < g->ordre; l++) {
 
-                            if (g->adj[j][l] == 1 && color[l] > 0) { // lien entre sommet de meme couleur
+                            if (g->adj[j][l] == 1 && color[l] == couleur) { // lien entre sommet de meme couleur
                                 color[j] = 0;  //changment de couleur
                                // printf("erreur: couleur %d lien entre %d et %d\n", couleur, g->liste[j], g->liste[l]);
                                 //printf("couleur de %d: %d\n",g->liste[j], color[j]);
@@ -262,9 +262,7 @@ graphe* exclusion(char* fichier){
 
 
                     if (g->adj[i][j] == 1 || color[j] >0) {
-
                        // printf("NOPE %d: couleur : %d\n", g->liste[j],color[j]);
-
                     }
                 }
 
