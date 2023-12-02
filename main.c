@@ -32,15 +32,20 @@ typedef struct graphe {
 
 //tableau des sommets
 
-void tri(int* liste, int max) //tri decroissant des degre des sommet par ordre décroissant
+void tri(int* deg, int max, int* liste) //tri decroissant des degre des sommet par ordre décroissant
 {
     int temp;
+    int temp1;
     for(int i = 0; i< max-1; i++){
         for (int j =0; j < max -i-1; j++){
-            if(liste[j] < liste[j+1]){
-                temp = liste[j];
+            if(deg[j] < deg[j+1]){
+                temp = deg[j];
+                deg[j] = deg[j+1];
+                deg[j+1] = temp;
+
+                temp1 = liste[j];
                 liste[j] = liste[j+1];
-                liste[j+1] = temp;
+                liste[j+1] = temp1;
 
             }
         }
@@ -60,9 +65,9 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
         }
     }
 
-    printf("orde %d",g->ordre);
+    printf("orde %d\n",g->ordre);
     g->taille = nbLigne;
-    printf("orde %d",g->taille);
+    printf("taille %d\n",g->taille);
     g->sommet = (arette*)malloc(g->taille*sizeof(arette));
     g-> liste = malloc (sizeof(int) * g->ordre);
 
@@ -113,7 +118,8 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
         }
     }
 
-    g->ordre = nbs;
+   g->ordre = nbs;
+    printf("2 -orde %d\n",g->ordre);
     
 
     int s; //sommet temporaire
@@ -135,11 +141,14 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
                 cpt ++;
             }
         }
-
         deg[k] = cpt;
     }
 
-    tri(deg,g->ordre);
+    tri(deg,g->ordre,g->liste);
+
+    for (int i=0; i<g->ordre; i++){
+        printf("def de %d: %d\n",g->liste[i],deg[i]);
+    }
 
     for(int i=0;i< g->ordre; i++) {
         for (int j = 0; j < g->ordre; j++) {
@@ -158,22 +167,18 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
         printf(" S: %d\n",g->liste[i]);
     }
 
-    return g;
-}
-
-graphe* ADJ(graphe* g){
     //remplir matrice
 
-    g->adj = (int**) calloc(g->ordre, sizeof(int *)); //matrice d'adjacence
+    g->adj = (int**) calloc(g->ordre, sizeof(int)); //matrice d'adjacence
     for (int i =0; i< g->ordre; i++){
         g->adj[i] = (int*) calloc(g->ordre, sizeof(int));
     }
 
     int indice1;
     int indice2;
-///PB
+
     for(int i=0;i<g->taille;i++){
-    printf("%d",i);
+        printf("%d",i);
         indice1 = g->sommet[i].op1.indice;
         indice2 = g->sommet[i].op2.indice;
 
@@ -182,10 +187,6 @@ graphe* ADJ(graphe* g){
 
     }
 
-    return g;
-}
-
-graphe* WP(graphe* g){
     //well et powell
 
     printf("\n\nWELSH ET POWELL");
@@ -216,9 +217,9 @@ graphe* WP(graphe* g){
                             break;
                         }
 
-                       /* else {
-                            printf("ok pour %d et %d \n", g->liste[j], g->liste[l]);
-                        }*/
+                        /* else {
+                             printf("ok pour %d et %d \n", g->liste[j], g->liste[l]);
+                         }*/
 
 
                     }
@@ -242,8 +243,11 @@ graphe* WP(graphe* g){
     }
 
     free(color);
+
     return g;
 }
+
+
 
 
 int main() {
@@ -262,8 +266,7 @@ int main() {
     g->ordre = 8;
 
     Graphe(ifs,g);
-    ADJ(g);
-    WP(g);
+
 
     free(g->sommet);
     free(g->liste);
