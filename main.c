@@ -3,11 +3,6 @@
 #include <stdlib.h>
 
 // Structure pour représenter une paire d'opérations interdites
-typedef struct {
-    int operation1;
-    int operation2;
-} Exclusion;
-
 struct point{
     int val;
     int indice;
@@ -77,15 +72,15 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
     //lecture de chaque contraintes
     for (int i=0; i<g->taille; ++i) {
-        int v1 = 0; //valeur ors du parcours de liste 1 si op1 deja là
-        int v2 = 0; //valeur ors du parcours de liste 1 si op2 deja là
+        int v1 = 0; //valeur lors du parcours de liste 1 si op1 deja là
+        int v2 = 0; //valeur lors du parcours de liste 1 si op2 deja là
         // créer les arêtes du graphe
         fscanf(ifs, "%d%d", &op1, &op2);
 
         g->sommet[i].op1.val = op1;
         g->sommet[i].op2.val = op2;
-        //printf("VALEUR: %d\n",g->sommet[i].op1.val);
-        //printf("VALEUR: %d\n",g->sommet[i].op2.val);
+        printf("VALEUR: %d\n",g->sommet[i].op1.val);
+        printf("VALEUR: %d\n",g->sommet[i].op2.val);
         if (nbs >= 1) {
             for (int j = 0; j < nbs; j++) {
                 if (g->liste[j] == op1) //si op1 deja dans la liste
@@ -109,6 +104,7 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
                 g->liste[nbs] = op2;
                 nbs++;
             }
+
         }
 
         else { //nbs ==0
@@ -119,7 +115,7 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
         }
     }
 
-   g->ordre = nbs;
+   //g->ordre = nbs;
     printf("2 -orde %d\n",g->ordre);
     
 
@@ -128,6 +124,7 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
     for (int k=0; k < g->ordre; k++){
 
+        int f =0; //valeur sommet relié à 0 ou non
         s = g->liste[k];
         int cpt = 0; //compte les degre sur sommet s
 
@@ -141,8 +138,36 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
             {
                 cpt ++;
             }
+
+            if (g->sommet[j].op2.val == 0 && g->sommet[j].op1.val == s )
+            {
+                deg[k] = 0;
+                printf("OK %d et %d %d\n",g->sommet[j].op2.val,g->sommet[j].op2.val,deg[k]);
+                f = 1;
+            }
+
+            if (g->sommet[j].op2.val == s && g->sommet[j].op1.val == 0 ) //une liaion
+            {
+                deg[k] = 0;
+                printf("OK %d et %d %d\n",g->sommet[j].op2.val,g->sommet[j].op2.val,deg[k]);
+                f = 1;
+            }
+
+            if (s == 0 ) //somme inutile
+            {
+                f = 1;
+            }
+
+
         }
-        deg[k] = cpt;
+
+        if(f== 0) {
+            deg[k] = cpt;
+        }
+        else{
+            deg[k] =0;
+        }
+
     }
 
     tri(deg,g->ordre,g->liste);
@@ -172,7 +197,7 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
     else{
 
-        for (int i = 0; i < g->taille; i++) {
+        for (int i = 0; i < g->ordre; i++) {
             for (int j = 0; j < g->taille; j++) {
                 if (g->sommet[j].op1.val == g->liste[i]) {
                     printf("VAL %d;\n", g->sommet[j].op1.val);
@@ -189,11 +214,9 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
     }
 
-   /* for(int i =0; i<g->ordre;i++){
-        printf(" S: %d\n",g->liste[i]);
-    }*/
 
     //remplir matrice
+
 
     g->adj = malloc(g->ordre*sizeof(int*)); //matrice d'adjacence
     for (int i =0; i< g->ordre; i++) {
@@ -207,15 +230,14 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
     }
 
 
-for (int i=0;i<g->ordre;i++){
-
+for (int i=0;i<g->taille;i++){
+printf("\n");
     for(int j = 0;j<g->taille;j++) {
-
+        //printf("%d OK\n",j);
         int val1 = g->sommet[j].op1.val;
         int val2 = g->sommet[j].op2.val;
         //printf("inde %d\n", g->sommet[j].op1.val);
         //printf(" inde %d\n\n", g->sommet[j].op2.val);
-
 
         g->adj[val1][val2] = 1;
         g->adj[val2][val1] = 1;
@@ -231,6 +253,11 @@ for (int i=0;i<g->ordre;i++){
         }
         printf("\n");
     }
+    printf(" OK\n");
+
+
+    ///////////
+
 
     //well et powell
 
@@ -314,7 +341,7 @@ int main() {
         exit(-1);
     }
 
-    //g->ordre = 35;
+    g->ordre = 31;
 
     Graphe(ifs,g);
 
