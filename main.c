@@ -32,10 +32,11 @@ typedef struct graphe {
 
 //tableau des sommets
 
-void tri(int* deg, int max, int* liste) //tri decroissant des degre des sommet par ordre décroissant
+void tri(int* deg, int max, int* liste, arette* sommet) //tri decroissant des degre des sommet par ordre décroissant
 {
     int temp;
     int temp1;
+    struct arette temp2;
     for(int i = 0; i< max-1; i++){
         for (int j =0; j < max -i-1; j++){
             if(deg[j] < deg[j+1]){
@@ -46,6 +47,10 @@ void tri(int* deg, int max, int* liste) //tri decroissant des degre des sommet p
                 temp1 = liste[j];
                 liste[j] = liste[j+1];
                 liste[j+1] = temp1;
+
+                temp2 = sommet[j];
+                sommet[j] = sommet[j+1];
+                sommet[j+1] = temp2;
 
             }
         }
@@ -144,7 +149,7 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
         deg[k] = cpt;
     }
 
-    tri(deg,g->ordre,g->liste);
+    tri(deg,g->ordre,g->liste,g->sommet);
 
     for (int i=0; i<g->ordre; i++){
         printf("def de %d: %d\n",g->liste[i],deg[i]);
@@ -169,22 +174,33 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
     //remplir matrice
 
-    g->adj = (int**) calloc(g->ordre, sizeof(int)); //matrice d'adjacence
-    for (int i =0; i< g->ordre; i++){
-        g->adj[i] = (int*) calloc(g->ordre, sizeof(int));
+    g->adj = (int**) calloc(g->ordre, sizeof(int*)); //matrice d'adjacence
+    for (int i =0; i< g->ordre; i++) {
+        g->adj[i] = (int *) calloc(g->ordre, sizeof(int));
+
+        if (!g->adj[i]) {
+            perror("Allocation de mémoire pour la matrice d'adjacence a échoué");
+            exit(EXIT_FAILURE);
+        }
+
     }
 
-    int indice1;
-    int indice2;
 
-    for(int i=0;i<g->taille;i++){
-        printf("%d",i);
-        indice1 = g->sommet[i].op1.indice;
-        indice2 = g->sommet[i].op2.indice;
+    for(int i = 0; i < g->ordre; i++) {
+        printf("%d", i);
+        int indice1 = g->sommet[i].op1.indice;
+        int indice2 = g->sommet[i].op2.indice;
 
         g->adj[indice1][indice2] = 1;
         g->adj[indice2][indice1] = 1;
+    }
 
+
+    for (int i =0;i<g->ordre;i++){
+        for(int j=0;j<g->ordre;j++){
+            printf("%d -",g->adj[i][j]);
+        }
+        printf("\n");
     }
 
     //well et powell
@@ -206,20 +222,21 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
             for (int j = i+1; j < g->ordre; j++) { // coloration de sommet en fonction de lien avec s1 ou non
 
                 if (g->adj[i][j] == 0 && color[j] == 0) { // pas de lien avec s1
-                    //printf("%d n'as pas de lien avec %d\n", s1, color[j]);
+                    printf("%d n'as pas de lien avec %d\n", s1, g->liste[j]);
                     color[j] = couleur;
-                    printf("Couleur de %d == %d\n",g->liste[j],color[j]);
+                    printf("Couleur de %d == %d indice%d\n",g->liste[j],color[j],j);
 
                     for (int l = 0; l < j; l++) {
 
                         if (g->adj[j][l] == 1 && color[l] == color[j]) { // lien entre sommet de meme couleur
                             color[j] = 0;  //changment de couleur
+                            printf("NOPE1");
                             break;
                         }
 
-                        /* else {
-                             printf("ok pour %d et %d \n", g->liste[j], g->liste[l]);
-                         }*/
+                         else {
+                             printf("ok pour %d (c%d) et %d(c%d) adj == %d \n", g->liste[j],color[j], g->liste[l],color[l],g->adj[j][l]);
+                         }
 
 
                     }
