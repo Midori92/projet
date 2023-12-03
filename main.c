@@ -32,11 +32,10 @@ typedef struct graphe {
 
 //tableau des sommets
 
-void tri(int* deg, int max, int* liste, arette* sommet) //tri decroissant des degre des sommet par ordre décroissant
+void tri(int* deg, int max, int* liste) //tri decroissant des degre des sommet par ordre décroissant
 {
     int temp;
     int temp1;
-    struct arette temp2;
     for(int i = 0; i< max-1; i++){
         for (int j =0; j < max -i-1; j++){
             if(deg[j] < deg[j+1]){
@@ -47,11 +46,6 @@ void tri(int* deg, int max, int* liste, arette* sommet) //tri decroissant des de
                 temp1 = liste[j];
                 liste[j] = liste[j+1];
                 liste[j+1] = temp1;
-
-                temp2 = sommet[j];
-                sommet[j] = sommet[j+1];
-                sommet[j+1] = temp2;
-
             }
         }
 
@@ -90,6 +84,8 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
         g->sommet[i].op1.val = op1;
         g->sommet[i].op2.val = op2;
+        printf("VALEUR: %d\n",g->sommet[i].op1.val);
+        printf("VALEUR: %d\n",g->sommet[i].op2.val);
         if (nbs >= 1) {
             for (int j = 0; j < nbs; j++) {
                 if (g->liste[j] == op1) //si op1 deja dans la liste
@@ -149,7 +145,7 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
         deg[k] = cpt;
     }
 
-    tri(deg,g->ordre,g->liste,g->sommet);
+    tri(deg,g->ordre,g->liste);
 
     for (int i=0; i<g->ordre; i++){
         printf("def de %d: %d\n",g->liste[i],deg[i]);
@@ -158,10 +154,12 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
     for(int i=0;i< g->ordre; i++) {
         for (int j = 0; j < g->ordre; j++) {
             if(g->sommet[j].op1.val == g->liste[i]){
+                printf("VAL %d;\n",g->sommet[j].op1.val);
                 g->sommet[j].op1.indice = i;
             }
 
             if(g->sommet[j].op2.val == g->liste[i]){
+                printf("VAL %d;\n",g->sommet[j].op2.val);
                 g->sommet[j].op2.indice = i;
             }
         }
@@ -174,9 +172,9 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
     //remplir matrice
 
-    g->adj = (int**) calloc(g->ordre, sizeof(int*)); //matrice d'adjacence
+    g->adj = malloc(g->ordre*sizeof(int*)); //matrice d'adjacence
     for (int i =0; i< g->ordre; i++) {
-        g->adj[i] = (int *) calloc(g->ordre, sizeof(int));
+        g->adj[i] = calloc(g->ordre, sizeof(int));
 
         if (!g->adj[i]) {
             perror("Allocation de mémoire pour la matrice d'adjacence a échoué");
@@ -185,16 +183,37 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
     }
 
-
+/*
     for(int i = 0; i < g->ordre; i++) {
-        printf("%d", i);
+       // printf("%d\n", i);
         int indice1 = g->sommet[i].op1.indice;
         int indice2 = g->sommet[i].op2.indice;
+        printf("%d inde %d\n",g->sommet[i].op1.val,g->sommet[i].op1.indice);
+        printf("%d inde %d\n\n",g->sommet[i].op2.val,g->sommet[i].op2.indice);
 
         g->adj[indice1][indice2] = 1;
         g->adj[indice2][indice1] = 1;
     }
 
+    */
+
+for (int i=0;i<g->ordre;i++){
+
+    for(int j = 0;j<g->taille;j++) {
+
+        int val1 = g->sommet[j].op1.val;
+        int val2 = g->sommet[j].op2.val;
+        printf("inde %d\n", g->sommet[j].op1.val);
+        printf(" inde %d\n\n", g->sommet[j].op2.val);
+
+
+        g->adj[val1][val2] = 1;
+        g->adj[val2][val1] = 1;
+
+    }
+}
+
+///////////////////
 
     for (int i =0;i<g->ordre;i++){
         for(int j=0;j<g->ordre;j++){
@@ -210,21 +229,21 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
     int* color = (int*) calloc(g->ordre,sizeof(int)); //0 partout si pas de couleur
     int couleur = 1;
 
-
+//dans ADJ = nbre= indice
     for(int i = 0; i<g->ordre; i++) {
         s1 = g->liste[i]; //sommet dans l'ordre
 
-        if (color[i] == 0) { //si non colorer
-            color[i] = couleur;
-            printf("\n\nCOULEU: %d et s: %d\n", couleur, s1);
+        if (color[s1] == 0) { //si non colorer
+            color[s1] = couleur;
+
 
 
             for (int j = i+1; j < g->ordre; j++) { // coloration de sommet en fonction de lien avec s1 ou non
 
-                if (g->adj[i][j] == 0 && color[j] == 0) { // pas de lien avec s1
-                    printf("%d n'as pas de lien avec %d\n", s1, g->liste[j]);
+                if (g->adj[s1][j] == 0 && color[j] == 0) { // pas de lien avec s1
+                    printf("%d n'as pas de lien avec %d\n", s1, j);
                     color[j] = couleur;
-                    printf("Couleur de %d == %d indice%d\n",g->liste[j],color[j],j);
+                    printf("Couleur de %d == %d indice%d\n",j,color[j],j);
 
                     for (int l = 0; l < j; l++) {
 
@@ -235,7 +254,7 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
                         }
 
                          else {
-                             printf("ok pour %d (c%d) et %d(c%d) adj == %d \n", g->liste[j],color[j], g->liste[l],color[l],g->adj[j][l]);
+                             printf("ok pour %d (c%d) et %d(c%d) adj == %d \n", j,color[j], l,color[l],g->adj[j][l]);
                          }
 
 
@@ -269,6 +288,9 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
 int main() {
     graphe * g=(graphe*)malloc(sizeof(graphe));
+    g->sommet = NULL;
+    g->liste = NULL;
+    g->adj = NULL;
     char fichier[100];
     printf("ENTREZ LE NOM DU FICHIER (avec le .txt):");
     scanf("%s",fichier);
