@@ -84,8 +84,8 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
         g->sommet[i].op1.val = op1;
         g->sommet[i].op2.val = op2;
-        printf("VALEUR: %d\n",g->sommet[i].op1.val);
-        printf("VALEUR: %d\n",g->sommet[i].op2.val);
+        //printf("VALEUR: %d\n",g->sommet[i].op1.val);
+        //printf("VALEUR: %d\n",g->sommet[i].op2.val);
         if (nbs >= 1) {
             for (int j = 0; j < nbs; j++) {
                 if (g->liste[j] == op1) //si op1 deja dans la liste
@@ -154,21 +154,21 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
     for(int i=0;i< g->ordre; i++) {
         for (int j = 0; j < g->ordre; j++) {
             if(g->sommet[j].op1.val == g->liste[i]){
-                printf("VAL %d;\n",g->sommet[j].op1.val);
+                //printf("VAL %d;\n",g->sommet[j].op1.val);
                 g->sommet[j].op1.indice = i;
             }
 
             if(g->sommet[j].op2.val == g->liste[i]){
-                printf("VAL %d;\n",g->sommet[j].op2.val);
+               // printf("VAL %d;\n",g->sommet[j].op2.val);
                 g->sommet[j].op2.indice = i;
             }
         }
 
     }
 
-    for(int i =0; i<g->ordre;i++){
+   /* for(int i =0; i<g->ordre;i++){
         printf(" S: %d\n",g->liste[i]);
-    }
+    }*/
 
     //remplir matrice
 
@@ -183,19 +183,6 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
 
     }
 
-/*
-    for(int i = 0; i < g->ordre; i++) {
-       // printf("%d\n", i);
-        int indice1 = g->sommet[i].op1.indice;
-        int indice2 = g->sommet[i].op2.indice;
-        printf("%d inde %d\n",g->sommet[i].op1.val,g->sommet[i].op1.indice);
-        printf("%d inde %d\n\n",g->sommet[i].op2.val,g->sommet[i].op2.indice);
-
-        g->adj[indice1][indice2] = 1;
-        g->adj[indice2][indice1] = 1;
-    }
-
-    */
 
 for (int i=0;i<g->ordre;i++){
 
@@ -203,8 +190,8 @@ for (int i=0;i<g->ordre;i++){
 
         int val1 = g->sommet[j].op1.val;
         int val2 = g->sommet[j].op2.val;
-        printf("inde %d\n", g->sommet[j].op1.val);
-        printf(" inde %d\n\n", g->sommet[j].op2.val);
+        //printf("inde %d\n", g->sommet[j].op1.val);
+        //printf(" inde %d\n\n", g->sommet[j].op2.val);
 
 
         g->adj[val1][val2] = 1;
@@ -232,29 +219,31 @@ for (int i=0;i<g->ordre;i++){
 //dans ADJ = nbre= indice
     for(int i = 0; i<g->ordre; i++) {
         s1 = g->liste[i]; //sommet dans l'ordre
+        printf("\nS1 = %d\n",s1);
+        printf("COULEUR S1 %d\n",color[s1]);
 
         if (color[s1] == 0) { //si non colorer
             color[s1] = couleur;
-
-
+            printf("2 -COULEUR S1 %d\n",color[s1]);
 
             for (int j = i+1; j < g->ordre; j++) { // coloration de sommet en fonction de lien avec s1 ou non
 
-                if (g->adj[s1][j] == 0 && color[j] == 0) { // pas de lien avec s1
-                    printf("%d n'as pas de lien avec %d\n", s1, j);
-                    color[j] = couleur;
-                    printf("Couleur de %d == %d indice%d\n",j,color[j],j);
+                int s2 = g->liste[j];
+                if (g->adj[s1][s2] == 0 && color[s2] == 0) { // pas de lien avec s1
+                    printf("%d n'as pas de lien avec %d\n", s1, s2);
+                    color[s2] = couleur;
+                    printf("Couleur de %d == %d indice%d\n",s2,color[s2],j);
 
                     for (int l = 0; l < j; l++) {
-
-                        if (g->adj[j][l] == 1 && color[l] == color[j]) { // lien entre sommet de meme couleur
-                            color[j] = 0;  //changment de couleur
+                        int s3 = g->liste[l];
+                        if (g->adj[s2][s3] == 1 && color[s3] == color[s2] ) { // lien entre sommet de meme couleur
+                            color[s3] = 0;  //changment de couleur
                             printf("NOPE1");
                             break;
                         }
 
                          else {
-                             printf("ok pour %d (c%d) et %d(c%d) adj == %d \n", j,color[j], l,color[l],g->adj[j][l]);
+                             printf("ok pour %d (c%d) et %d(c%d) adj == %d \n", s2,color[s2], s3,color[s3],g->adj[s2][s3]);
                          }
 
 
@@ -269,11 +258,11 @@ for (int i=0;i<g->ordre;i++){
     printf("couleur %d",couleur-1);
 
 
-    for(int i =1; i<= couleur;i++){
+    for(int i =0; i< couleur;i++){
         printf("\ncoueleur %d: ",i);
         for (int j=0; j<g->ordre;j++){
             if (color[j] == i){
-                printf("%d - ",g->liste[j]);
+                printf("%d - ",j);
             }
         }
     }
@@ -302,7 +291,7 @@ int main() {
         exit(-1);
     }
 
-    g->ordre = 8;
+    g->ordre = 35;
 
     Graphe(ifs,g);
 
