@@ -151,17 +151,40 @@ graphe* Graphe(FILE* ifs,graphe* g){ //creation du graphe
         printf("def de %d: %d\n",g->liste[i],deg[i]);
     }
 
-    for(int i=0;i< g->ordre; i++) {
-        for (int j = 0; j < g->ordre; j++) {
-            if(g->sommet[j].op1.val == g->liste[i]){
-                //printf("VAL %d;\n",g->sommet[j].op1.val);
-                g->sommet[j].op1.indice = i;
+    if(g->taille > g->ordre) {
+
+        for (int i = 0; i < g->ordre; i++) {
+            for (int j = 0; j < g->ordre; j++) {
+                if (g->sommet[j].op1.val == g->liste[i]) {
+                    printf("VAL %d;\n", g->sommet[j].op1.val);
+                    g->sommet[j].op1.indice = i;
+                }
+
+                if (g->sommet[j].op2.val == g->liste[i]) {
+                    printf("VAL %d;\n", g->sommet[j].op2.val);
+                    g->sommet[j].op2.indice = i;
+                }
             }
 
-            if(g->sommet[j].op2.val == g->liste[i]){
-               // printf("VAL %d;\n",g->sommet[j].op2.val);
-                g->sommet[j].op2.indice = i;
+        }
+
+    }
+
+    else{
+
+        for (int i = 0; i < g->taille; i++) {
+            for (int j = 0; j < g->taille; j++) {
+                if (g->sommet[j].op1.val == g->liste[i]) {
+                    printf("VAL %d;\n", g->sommet[j].op1.val);
+                    g->sommet[j].op1.indice = i;
+                }
+
+                if (g->sommet[j].op2.val == g->liste[i]) {
+                    printf("VAL %d;\n", g->sommet[j].op2.val);
+                    g->sommet[j].op2.indice = i;
+                }
             }
+
         }
 
     }
@@ -291,7 +314,7 @@ int main() {
         exit(-1);
     }
 
-    g->ordre = 35;
+    //g->ordre = 35;
 
     Graphe(ifs,g);
 
